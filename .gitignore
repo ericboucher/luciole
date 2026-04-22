@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+dist/
+dist-ssr/
+
+# Build output
+src-tauri/target/
+src-tauri/gen/
+
+# Bundled binaries and models (fetched at build / first launch)
+src-tauri/binaries/
+src-tauri/resources/models/
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.log
+*.swp
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Local user data (dev runs)
+~/.luciole/
+
+# Tauri
+src-tauri/WixTools/
+src-tauri/.cargo/config.toml

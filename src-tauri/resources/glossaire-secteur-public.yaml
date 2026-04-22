@@ -1,0 +1,63 @@
+# Glossaire des acronymes du secteur public français
+# Source communautaire — compléter et proposer en PR.
+# Ce fichier est copié dans ~/.luciole/glossaire.yaml au premier lancement.
+
+acronyms:
+  - short: DINUM
+    full: Direction Interministérielle du Numérique
+  - short: SGPE
+    full: Secrétariat Général à la Planification Écologique
+  - short: ANSSI
+    full: Agence Nationale de la Sécurité des Systèmes d'Information
+  - short: CNIL
+    full: Commission Nationale de l'Informatique et des Libertés
+  - short: DGFIP
+    full: Direction Générale des Finances Publiques
+  - short: DGCCRF
+    full: Direction Générale de la Concurrence, de la Consommation et de la Répression des Fraudes
+  - short: HFDS
+    full: Haut Fonctionnaire de Défense et de Sécurité
+  - short: RGPD
+    full: Règlement Général sur la Protection des Données
+  - short: RGAA
+    full: Référentiel Général d'Amélioration de l'Accessibilité
+  - short: RGI
+    full: Référentiel Général d'Interopérabilité
+  - short: RGS
+    full: Référentiel Général de Sécurité
+  - short: ZTNA
+    full: Zero Trust Network Access
+  - short: RPG
+    full: Registre Parcellaire Graphique
+  - short: SIV
+    full: Système d'Immatriculation des Véhicules
+  - short: SI
+    full: Système d'Information
+  - short: DSI
+    full: Direction des Systèmes d'Information
+  - short: PSSI
+    full: Politique de Sécurité des Systèmes d'Information
+  - short: PRA
+    full: Plan de Reprise d'Activité
+  - short: PCA
+    full: Plan de Continuité d'Activité
+  - short: MOA
+    full: Maîtrise d'Ouvrage
+  - short: MOE
+    full: Maîtrise d'Œuvre
+  - short: AMOA
+    full: Assistance à Maîtrise d'Ouvrage
+  - short: PMI
+    full: Plan de Management des Investissements
+  - short: BOAMP
+    full: Bulletin Officiel des Annonces de Marchés Publics
+  - short: UGAP
+    full: Union des Groupements d'Achats Publics
+  - short: AIFE
+    full: Agence pour l'Informatique Financière de l'État
+  - short: TCHAP
+    full: Messagerie instantanée sécurisée de l'État (basée sur Matrix)
+  - short: FCE
+    full: France Connect Entreprise
+  - short: FC
+    full: France Connect

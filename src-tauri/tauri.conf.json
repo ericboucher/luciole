@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Luciole",
+  "version": "0.1.0",
+  "identifier": "fr.luciole.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Luciole",
+        "width": 860,
+        "height": 640,
+        "minWidth": 640,
+        "minHeight": 480,
+        "resizable": true,
+        "center": true,
+        "visible": false,
+        "decorations": true,
+        "titleBarStyle": "Transparent",
+        "hiddenTitle": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:11434 http://localhost:11434"
+    },
+    "trayIcon": {
+      "iconAsTemplate": true,
+      "menuOnLeftClick": false,
+      "tooltip": "Luciole"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["dmg", "app"],
+    "icon": [],
+    "category": "Productivity",
+    "copyright": "Copyright © 2026 Luciole Contributors. Apache-2.0",
+    "shortDescription": "Compagnon IA local et souverain",
+    "longDescription": "Luciole est un compagnon IA local et souverain pour la productivité : dictée vocale, correction et traduction de texte, comptes-rendus de réunion avec diarisation des locuteurs. 100% hors ligne.",
+    "macOS": {
+      "minimumSystemVersion": "13.0",
+      "entitlements": "entitlements.plist",
+      "exceptionDomain": "",
+      "signingIdentity": null,
+      "providerShortName": null
+    }
+  },
+  "plugins": {
+    "globalShortcut": {},
+    "fs": {
+      "requireLiteralLeadingDot": false
+    }
+  }
+}

@@ -1,0 +1,59 @@
+[package]
+name = "luciole"
+version = "0.1.0"
+description = "Companion IA local et souverain pour l'agent public"
+authors = ["Luciole Contributors"]
+license = "Apache-2.0"
+repository = "https://github.com/ericboucher/luciole"
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "luciole_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.2", features = ["macos-private-api", "tray-icon"] }
+tauri-plugin-global-shortcut = "2.2"
+tauri-plugin-dialog = "2.2"
+tauri-plugin-fs = "2.2"
+tauri-plugin-shell = "2.2"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+tokio = { version = "1", features = ["full"] }
+once_cell = "1"
+directories = "5"
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1"
+
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "stream"] }
+futures-util = "0.3"
+
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[target."cfg(target_os = \"macos\")".dependencies]
+cocoa = "0.26"
+objc = "0.2"
+core-foundation = "0.10"
+core-graphics = "0.24"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
