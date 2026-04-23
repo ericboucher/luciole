@@ -1,9 +1,47 @@
 /**
- * Typed wrapper around Tauri's `invoke`. Centralising the command surface
- * here keeps the React code free of stringly-typed calls.
+ * Typed wrapper around Tauri's `invoke`.
+ *
+ * Note: this UI can be opened in a normal browser during dev (`vite`), where
+ * Tauri globals are not injected. Guard those cases so the app can render a
+ * helpful message instead of crashing on load.
  */
 
-import { invoke } from "@tauri-apps/api/core";
+type InvokeFn = <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+
+function hasTauriInvoke(): boolean {
+  const w = globalThis as unknown as {
+    __TAURI_INTERNALS__?: { invoke?: unknown };
+  };
+  return typeof w.__TAURI_INTERNALS__?.invoke === "function";
+}
+
+let cachedInvoke: InvokeFn | null = null;
+
+async function getInvoke(): Promise<InvokeFn | null> {
+  if (cachedInvoke) return cachedInvoke;
+  try {
+    const mod = await import("@tauri-apps/api/core");
+    cachedInvoke = mod.invoke as InvokeFn;
+    return cachedInvoke;
+  } catch {
+    return null;
+  }
+}
+
+async function safeInvoke<T>(
+  cmd: string,
+  args?: Record<string, unknown>,
+): Promise<T> {
+  const inv = await getInvoke();
+  if (!inv || !hasTauriInvoke()) {
+    throw new Error("TAURI_NOT_AVAILABLE");
+  }
+  return inv<T>(cmd, args);
+}
+
+export function isTauriAvailable(): boolean {
+  return hasTauriInvoke();
+}
 
 export interface Settings {
   language: string;
@@ -55,26 +93,27 @@ export interface TextActionRequest {
 }
 
 export const ipc = {
-  getSettings: () => invoke<Settings>("get_settings"),
-  updateSettings: (next: Settings) => invoke<void>("update_settings", { next }),
-  onboardingStatus: () => invoke<OnboardingStatus>("onboarding_status"),
-  completeOnboarding: () => invoke<void>("complete_onboarding"),
-  listNotes: () => invoke<Note[]>("list_notes"),
-  readNote: (path: string) => invoke<string>("read_note", { path }),
-  listGlossary: () => invoke<GlossaryEntry[]>("list_glossary"),
+  getSettings: () => safeInvoke<Settings>("get_settings"),
+  updateSettings: (next: Settings) =>
+    safeInvoke<void>("update_settings", { next }),
+  onboardingStatus: () => safeInvoke<OnboardingStatus>("onboarding_status"),
+  completeOnboarding: () => safeInvoke<void>("complete_onboarding"),
+  listNotes: () => safeInvoke<Note[]>("list_notes"),
+  readNote: (path: string) => safeInvoke<string>("read_note", { path }),
+  listGlossary: () => safeInvoke<GlossaryEntry[]>("list_glossary"),
   addGlossaryEntry: (short: string, full: string) =>
-    invoke<void>("add_glossary_entry", { short, full }),
+    safeInvoke<void>("add_glossary_entry", { short, full }),
   removeGlossaryEntry: (short: string) =>
-    invoke<void>("remove_glossary_entry", { short }),
-  startMeeting: () => invoke<string>("start_meeting"),
-  stopMeeting: () => invoke<MeetingResult>("stop_meeting"),
+    safeInvoke<void>("remove_glossary_entry", { short }),
+  startMeeting: () => safeInvoke<string>("start_meeting"),
+  stopMeeting: () => safeInvoke<MeetingResult>("stop_meeting"),
   runTextAction: (req: TextActionRequest) =>
-    invoke<string>("run_text_action", { req }),
-  checkOllamaInstalled: () => invoke<boolean>("check_ollama_installed"),
+    safeInvoke<string>("run_text_action", { req }),
+  checkOllamaInstalled: () => safeInvoke<boolean>("check_ollama_installed"),
   checkMicrophonePermission: () =>
-    invoke<boolean>("check_microphone_permission"),
+    safeInvoke<boolean>("check_microphone_permission"),
   checkAccessibilityPermission: () =>
-    invoke<boolean>("check_accessibility_permission"),
+    safeInvoke<boolean>("check_accessibility_permission"),
   requestAccessibilityPrompt: () =>
-    invoke<void>("request_accessibility_prompt"),
+    safeInvoke<void>("request_accessibility_prompt"),
 };

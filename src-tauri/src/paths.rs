@@ -38,10 +38,12 @@ pub fn glossary_path() -> PathBuf {
     root().join("glossaire.yaml")
 }
 
+#[allow(dead_code)]
 pub fn db_path() -> PathBuf {
     root().join("db.sqlite")
 }
 
+#[allow(dead_code)]
 pub fn speakers_db_path() -> PathBuf {
     root().join("speakers.db")
 }

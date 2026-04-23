@@ -59,8 +59,8 @@ Prérequis :
 - Xcode Command Line Tools (macOS)
 
 ```sh
-npm install
-npm run tauri:dev
+pnpm install
+pnpm run tauri:dev
 ```
 
 La première compilation Rust prend plusieurs minutes. Les modèles IA ne sont

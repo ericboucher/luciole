@@ -41,7 +41,7 @@ pub fn setup_tray(app: &AppHandle) -> anyhow::Result<()> {
 
     TrayIconBuilder::with_id("luciole-tray")
         .menu(&menu)
-        .menu_on_left_click(false)
+        .show_menu_on_left_click(false)
         .tooltip("Luciole")
         .on_menu_event(|app, event| match event.id.as_ref() {
             "open-notes" => focus_main(app, "#/notes"),

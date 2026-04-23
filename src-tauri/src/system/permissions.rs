@@ -4,6 +4,7 @@
 //! checking every permission state, so we combine TCC-friendly probes.
 
 #[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
 pub fn microphone_granted() -> bool {
     use objc::{msg_send, runtime::Class, sel, sel_impl};
     unsafe {
@@ -75,6 +76,7 @@ pub fn prompt_accessibility() -> anyhow::Result<()> {
 }
 
 #[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
 unsafe fn ns_string(s: &str) -> *mut objc::runtime::Object {
     use objc::{msg_send, runtime::Class, sel, sel_impl};
     let cls = Class::get("NSString").unwrap();

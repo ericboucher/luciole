@@ -4,6 +4,7 @@
 //! System Settings → Privacy & Security → Accessibility.
 
 #[cfg(target_os = "macos")]
+#[allow(dead_code)]
 pub fn selected_text() -> anyhow::Result<String> {
     // TODO: AXUIElementCopyAttributeValue on the focused element for
     // `kAXSelectedTextAttribute`. Fall back to clipboard-copy trick
@@ -12,6 +13,7 @@ pub fn selected_text() -> anyhow::Result<String> {
 }
 
 #[cfg(not(target_os = "macos"))]
+#[allow(dead_code)]
 pub fn selected_text() -> anyhow::Result<String> {
     anyhow::bail!("selection read only available on macOS")
 }

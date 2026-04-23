@@ -7,6 +7,7 @@
 
 use std::path::Path;
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub enum Mode {
     /// Short utterance (dictation). Optimized for latency, uses `small`.
@@ -16,6 +17,7 @@ pub enum Mode {
     Meeting,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct Segment {
     pub start_ms: u64,
@@ -23,12 +25,14 @@ pub struct Segment {
     pub text: String,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct Transcript {
     pub language: String,
     pub segments: Vec<Segment>,
 }
 
+#[allow(dead_code)]
 impl Transcript {
     pub fn flat_text(&self) -> String {
         self.segments

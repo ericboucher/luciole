@@ -10,6 +10,7 @@
 //! that accepts text input — the canonical "inject anywhere" trick on macOS.
 
 #[cfg(target_os = "macos")]
+#[allow(dead_code)]
 pub fn paste_into_focused_app(_text: &str) -> anyhow::Result<()> {
     // TODO: implement clipboard save → set → paste → restore.
     //   - Use `NSPasteboard generalPasteboard` via `objc` for clipboard.
@@ -21,6 +22,7 @@ pub fn paste_into_focused_app(_text: &str) -> anyhow::Result<()> {
 }
 
 #[cfg(not(target_os = "macos"))]
+#[allow(dead_code)]
 pub fn paste_into_focused_app(_text: &str) -> anyhow::Result<()> {
     anyhow::bail!("text injection only available on macOS")
 }

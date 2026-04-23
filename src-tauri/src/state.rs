@@ -5,6 +5,7 @@ use std::sync::Mutex;
 #[derive(Default)]
 pub struct AppState {
     pub meeting: Mutex<MeetingRuntime>,
+    #[allow(dead_code)]
     pub dictation: Mutex<DictationRuntime>,
 }
 
@@ -17,5 +18,6 @@ pub struct MeetingRuntime {
 
 #[derive(Default)]
 pub struct DictationRuntime {
+    #[allow(dead_code)]
     pub listening: bool,
 }

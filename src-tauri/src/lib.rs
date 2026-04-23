@@ -58,9 +58,19 @@ pub fn run() {
             tray::setup_tray(app.handle())?;
             shortcuts::register_default_shortcuts(app.handle())?;
 
-            // Hide the main window on first boot; the menu bar is the anchor.
             if let Some(main) = app.get_webview_window("main") {
-                let _ = main.hide();
+                // In production, Luciole is menu-bar anchored (`LSUIElement = true`).
+                // In dev/debug, auto-show window so it's obvious app launched.
+                #[cfg(debug_assertions)]
+                {
+                    let _ = main.show();
+                    let _ = main.set_focus();
+                }
+
+                #[cfg(not(debug_assertions))]
+                {
+                    let _ = main.hide();
+                }
             }
             Ok(())
         })
