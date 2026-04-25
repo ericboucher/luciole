@@ -16,7 +16,7 @@ mod state;
 mod system;
 mod tray;
 
-use tauri::Manager;
+use tauri::{Manager, RunEvent, WebviewUrl};
 use tracing_subscriber::EnvFilter;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -28,7 +28,7 @@ pub fn run() {
         .with_target(false)
         .init();
 
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
@@ -39,6 +39,7 @@ pub fn run() {
             commands::update_settings,
             commands::onboarding_status,
             commands::complete_onboarding,
+            commands::reset_onboarding,
             commands::list_notes,
             commands::read_note,
             commands::list_glossary,
@@ -47,10 +48,14 @@ pub fn run() {
             commands::start_meeting,
             commands::stop_meeting,
             commands::run_text_action,
+            commands::run_text_action_on_selection,
             commands::check_ollama_installed,
             commands::check_microphone_permission,
+            commands::request_microphone_prompt,
             commands::check_accessibility_permission,
             commands::request_accessibility_prompt,
+            commands::open_system_settings,
+            commands::current_exe_path,
         ])
         .setup(|app| {
             paths::ensure_app_dirs()?;
@@ -58,22 +63,59 @@ pub fn run() {
             tray::setup_tray(app.handle())?;
             shortcuts::register_default_shortcuts(app.handle())?;
 
+            // Overlay window (Snaply-like “+” near selection).
+            // Hidden by default; shown/positioned by macOS selection monitor.
+            let _overlay = tauri::WebviewWindowBuilder::new(
+                app,
+                "overlay",
+                WebviewUrl::App("index.html#/overlay".into()),
+            )
+            .decorations(false)
+            .transparent(true)
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .resizable(false)
+            .visible(false)
+            .inner_size(56.0, 56.0)
+            .build();
+
+            system::overlay::start(app.handle().clone());
+
             if let Some(main) = app.get_webview_window("main") {
-                // In production, Luciole is menu-bar anchored (`LSUIElement = true`).
-                // In dev/debug, auto-show window so it's obvious app launched.
-                #[cfg(debug_assertions)]
-                {
+                // macOS UX: "close window" should behave like "hide to tray",
+                // not terminate/destroy main window (so reopen works).
+                let main_for_close = main.clone();
+                main.on_window_event(move |event| {
+                    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                        api.prevent_close();
+                        let _ = main_for_close.hide();
+                    }
+                });
+
+                // Tray-first app: only steal focus when setup required.
+                let ax_ok = crate::system::permissions::accessibility_granted();
+                let mic_ok = crate::system::permissions::microphone_granted();
+                if ax_ok && mic_ok {
+                    let _ = main.hide();
+                } else {
                     let _ = main.show();
                     let _ = main.set_focus();
-                }
-
-                #[cfg(not(debug_assertions))]
-                {
-                    let _ = main.hide();
                 }
             }
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("error while running Luciole");
+        .build(tauri::generate_context!())
+        .expect("error while building Luciole");
+
+    app.run(|app, event| {
+        // macOS: Dock click triggers `Reopen` even for LSUIElement apps.
+        // Bring main window back when user explicitly asks.
+        #[cfg(target_os = "macos")]
+        if let RunEvent::Reopen { .. } = event {
+            if let Some(main) = app.get_webview_window("main") {
+                let _ = main.show();
+                let _ = main.set_focus();
+            }
+        }
+    });
 }

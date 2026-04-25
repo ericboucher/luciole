@@ -41,6 +41,11 @@ pub fn complete_onboarding() -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn reset_onboarding() -> Result<(), String> {
+    settings::mark_onboarding_incomplete().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 pub fn onboarding_status() -> OnboardingStatus {
     let settings = settings::snapshot();
     OnboardingStatus {
@@ -107,6 +112,30 @@ pub async fn run_text_action(req: TextActionRequest) -> Result<String, String> {
     llm::run_text_action(req).await.map_err(|e| e.to_string())
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TextActionOnSelectionRequest {
+    pub action: String,
+    pub target_language: Option<String>,
+    pub tone: Option<String>,
+}
+
+#[tauri::command]
+pub async fn run_text_action_on_selection(req: TextActionOnSelectionRequest) -> Result<String, String> {
+    let text = system::selection::selected_text().map_err(|e| e.to_string())?;
+    let out = llm::run_text_action(TextActionRequest {
+        action: req.action,
+        text,
+        target_language: req.target_language,
+        tone: req.tone,
+    })
+    .await
+    .map_err(|e| e.to_string())?;
+
+    system::injection::paste_into_focused_app(&out).map_err(|e| e.to_string())?;
+    Ok(out)
+}
+
 #[tauri::command]
 pub fn check_ollama_installed() -> bool {
     llm::ollama_installed()
@@ -118,6 +147,11 @@ pub fn check_microphone_permission() -> bool {
 }
 
 #[tauri::command]
+pub fn request_microphone_prompt() -> Result<(), String> {
+    system::permissions::prompt_microphone().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 pub fn check_accessibility_permission() -> bool {
     system::permissions::accessibility_granted()
 }
@@ -125,4 +159,36 @@ pub fn check_accessibility_permission() -> bool {
 #[tauri::command]
 pub fn request_accessibility_prompt() -> Result<(), String> {
     system::permissions::prompt_accessibility().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn open_system_settings(panel: String) -> Result<(), String> {
+    // Use macOS `open` so we don't depend on shell-plugin URL allowlisting.
+    #[cfg(target_os = "macos")]
+    {
+        let url = match panel.as_str() {
+            "microphone" => "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone",
+            "accessibility" => "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
+            _ => return Err("unknown panel".into()),
+        };
+
+        std::process::Command::new("/usr/bin/open")
+            .arg(url)
+            .spawn()
+            .map(|_| ())
+            .map_err(|e| e.to_string())
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = panel;
+        Err("only available on macOS".into())
+    }
+}
+
+#[tauri::command]
+pub fn current_exe_path() -> Result<String, String> {
+    std::env::current_exe()
+        .map(|p| p.display().to_string())
+        .map_err(|e| e.to_string())
 }

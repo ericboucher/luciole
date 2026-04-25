@@ -2,7 +2,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capabilities for the main Luciole window",
-  "windows": ["main", "dictation-pill", "speaker-naming"],
+  "windows": ["main", "overlay", "dictation-pill", "speaker-naming"],
   "permissions": [
     "core:default",
     "core:window:allow-show",

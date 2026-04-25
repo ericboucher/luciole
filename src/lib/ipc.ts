@@ -98,6 +98,7 @@ export const ipc = {
     safeInvoke<void>("update_settings", { next }),
   onboardingStatus: () => safeInvoke<OnboardingStatus>("onboarding_status"),
   completeOnboarding: () => safeInvoke<void>("complete_onboarding"),
+  resetOnboarding: () => safeInvoke<void>("reset_onboarding"),
   listNotes: () => safeInvoke<Note[]>("list_notes"),
   readNote: (path: string) => safeInvoke<string>("read_note", { path }),
   listGlossary: () => safeInvoke<GlossaryEntry[]>("list_glossary"),
@@ -109,11 +110,27 @@ export const ipc = {
   stopMeeting: () => safeInvoke<MeetingResult>("stop_meeting"),
   runTextAction: (req: TextActionRequest) =>
     safeInvoke<string>("run_text_action", { req }),
+  runTextActionOnSelection: (
+    action: TextAction,
+    opts?: { targetLanguage?: string; tone?: "formel" | "informel" },
+  ) =>
+    safeInvoke<string>("run_text_action_on_selection", {
+      req: {
+        action,
+        targetLanguage: opts?.targetLanguage,
+        tone: opts?.tone,
+      },
+    }),
   checkOllamaInstalled: () => safeInvoke<boolean>("check_ollama_installed"),
   checkMicrophonePermission: () =>
     safeInvoke<boolean>("check_microphone_permission"),
+  requestMicrophonePrompt: () =>
+    safeInvoke<void>("request_microphone_prompt"),
   checkAccessibilityPermission: () =>
     safeInvoke<boolean>("check_accessibility_permission"),
   requestAccessibilityPrompt: () =>
     safeInvoke<void>("request_accessibility_prompt"),
+  openSystemSettings: (panel: "microphone" | "accessibility") =>
+    safeInvoke<void>("open_system_settings", { panel }),
+  currentExePath: () => safeInvoke<string>("current_exe_path"),
 };

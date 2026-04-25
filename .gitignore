@@ -31,3 +31,4 @@ src-tauri/resources/models/
 # Tauri
 src-tauri/WixTools/
 src-tauri/.cargo/config.toml
+/docs/superpowers

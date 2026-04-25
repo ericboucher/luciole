@@ -25,6 +25,28 @@ pub fn microphone_granted() -> bool {
 }
 
 #[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+pub fn prompt_microphone() -> anyhow::Result<()> {
+    use block::ConcreteBlock;
+    use objc::{msg_send, runtime::Class, sel, sel_impl};
+
+    unsafe {
+        let cls = Class::get("AVCaptureDevice").ok_or_else(|| anyhow::anyhow!("AVCaptureDevice not found"))?;
+        let media_type = ns_string("soun");
+
+        // completionHandler: (BOOL granted) -> void
+        let handler = ConcreteBlock::new(|_granted: bool| {}).copy();
+        let _: () = msg_send![cls, requestAccessForMediaType: media_type completionHandler: &*handler];
+        Ok(())
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn prompt_microphone() -> anyhow::Result<()> {
+    Ok(())
+}
+
+#[cfg(target_os = "macos")]
 pub fn accessibility_granted() -> bool {
     use core_foundation::base::TCFType;
     use core_foundation::dictionary::CFDictionary;

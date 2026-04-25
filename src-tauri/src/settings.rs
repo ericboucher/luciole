@@ -76,3 +76,9 @@ pub fn mark_onboarding_complete() -> anyhow::Result<()> {
     current.onboarding_completed = true;
     update(current)
 }
+
+pub fn mark_onboarding_incomplete() -> anyhow::Result<()> {
+    let mut current = snapshot();
+    current.onboarding_completed = false;
+    update(current)
+}

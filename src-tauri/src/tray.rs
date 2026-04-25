@@ -4,6 +4,7 @@
 //! The dock icon is hidden; the tray menu is the primary entry point.
 
 use tauri::{
+    image::Image,
     menu::{Menu, MenuItem},
     tray::TrayIconBuilder,
     AppHandle, Emitter, Manager,
@@ -39,10 +40,30 @@ pub fn setup_tray(app: &AppHandle) -> anyhow::Result<()> {
         ],
     )?;
 
+    // Embed a small PNG for the menu bar tray icon.
+    // (Tauri v2 requires explicitly setting an icon on macOS.)
+    let tray_icon = Image::from_bytes(include_bytes!("../icons/32x32.png"))
+        .map_err(|e| anyhow::anyhow!(e.to_string()))?;
+
     TrayIconBuilder::with_id("luciole-tray")
+        .icon(tray_icon)
         .menu(&menu)
         .show_menu_on_left_click(false)
         .tooltip("Luciole")
+        .on_tray_icon_event(|tray, event| {
+            // macOS: if we disable "show_menu_on_left_click",
+            // we must handle left click ourselves or it becomes a no-op.
+            if matches!(
+                event,
+                tauri::tray::TrayIconEvent::Click {
+                    button: tauri::tray::MouseButton::Left,
+                    button_state: tauri::tray::MouseButtonState::Up,
+                    ..
+                }
+            ) {
+                focus_main(tray.app_handle(), "#/");
+            }
+        })
         .on_menu_event(|app, event| match event.id.as_ref() {
             "open-notes" => focus_main(app, "#/notes"),
             "open-glossary" => focus_main(app, "#/glossary"),
