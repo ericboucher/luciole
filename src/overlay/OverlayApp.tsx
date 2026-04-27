@@ -39,11 +39,11 @@ export function OverlayApp() {
         // Position right next to selection (end).
         // Note: On macOS, Tauri window positions match screen coordinates,
         // so we do not invert Y here.
-        const padX = -20;
-        const padY = -20;
-        const x = Math.round(next.anchor.x + next.anchor.width + padX);
+        const padX = +200;
+        const padY = +200;
+        const x = Math.round(next.anchor.x + padX);
         // Align vertically near selection center.
-        const y = Math.round(next.anchor.y + next.anchor.height / 2 + padY);
+        const y = Math.round(next.anchor.y + padY);
         await win.setPosition(new PhysicalPosition(x, y));
         await win.show();
       });
@@ -74,15 +74,7 @@ export function OverlayApp() {
   };
 
   return (
-    <div
-      style={{
-        width: 40,
-        height: 40,
-        position: "relative",
-        userSelect: "none",
-        background: "transparent",
-      }}
-    >
+    <div className="overlay-app">
       {/* plus button */}
       <button
         onClick={() => setOpen((v) => !v)}
