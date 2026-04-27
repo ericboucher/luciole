@@ -32,3 +32,4 @@ src-tauri/resources/models/
 src-tauri/WixTools/
 src-tauri/.cargo/config.toml
 /docs/superpowers
+/context-content
