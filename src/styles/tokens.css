@@ -1,0 +1,65 @@
+/*
+ * Design tokens — aligned on the French State Design System (DSFR).
+ * See https://www.systeme-de-design.gouv.fr/ for the canonical palette.
+ * These tokens mirror DSFR naming so we can swap to the upstream package
+ * without touching components.
+ */
+
+:root {
+  /* Couleurs primaires DSFR */
+  --luciole-blue-france: #000091;
+  --luciole-blue-france-hover: #1212ff;
+  --luciole-red-marianne: #e1000f;
+  --luciole-white: #ffffff;
+
+  /* Gris DSFR */
+  --luciole-grey-50: #f6f6f6;
+  --luciole-grey-100: #eeeeee;
+  --luciole-grey-200: #dddddd;
+  --luciole-grey-300: #cecece;
+  --luciole-grey-500: #929292;
+  --luciole-grey-700: #666666;
+  --luciole-grey-900: #161616;
+
+  /* Tokens sémantiques */
+  --color-bg: var(--luciole-white);
+  --color-bg-alt: var(--luciole-grey-50);
+  --color-border: var(--luciole-grey-200);
+  --color-text: var(--luciole-grey-900);
+  --color-text-muted: var(--luciole-grey-700);
+  --color-accent: var(--luciole-blue-france);
+  --color-accent-hover: var(--luciole-blue-france-hover);
+  --color-danger: var(--luciole-red-marianne);
+
+  /* Typographie — Marianne est la police officielle DSFR.
+     Au runtime, DSFR charge Marianne via @codegouvfr/react-dsfr. */
+  --font-sans: "Marianne", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  /* Échelle */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #161616;
+    --color-bg-alt: #242424;
+    --color-border: #353535;
+    --color-text: #f6f6f6;
+    --color-text-muted: #b5b5b5;
+    --color-accent: #8585f6;
+    --color-accent-hover: #b3b3ff;
+  }
+}

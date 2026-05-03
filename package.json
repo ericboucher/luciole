@@ -1,0 +1,36 @@
+{
+  "name": "luciole",
+  "version": "0.1.0",
+  "description": "Companion IA local et souverain pour l'agent public",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.24.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:build:app": "tauri build --bundles app && /usr/bin/codesign --force --deep --sign - --entitlements src-tauri/entitlements.plist src-tauri/target/release/bundle/macos/Luciole.app"
+  },
+  "dependencies": {
+    "@codegouvfr/react-dsfr": "^1.18.0",
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-dialog": "^2.2.0",
+    "@tauri-apps/plugin-fs": "^2.2.0",
+    "@tauri-apps/plugin-global-shortcut": "^2.2.0",
+    "@tauri-apps/plugin-shell": "^2.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.2.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

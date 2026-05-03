@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Luciole a besoin du microphone pour transcrire votre dictée et enregistrer vos réunions, entièrement sur votre Mac.</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Luciole utilise les événements système pour insérer du texte dans les applications actives.</string>
+    <key>NSSystemAdministrationUsageDescription</key>
+    <string>Luciole a besoin de l'accessibilité pour lire les sélections de texte et insérer le résultat.</string>
+</dict>
+</plist>
