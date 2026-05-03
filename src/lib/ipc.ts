@@ -133,4 +133,14 @@ export const ipc = {
   openSystemSettings: (panel: "microphone" | "accessibility") =>
     safeInvoke<void>("open_system_settings", { panel }),
   currentExePath: () => safeInvoke<string>("current_exe_path"),
+  whisperStatus: () =>
+    safeInvoke<{
+      binaryPath: string | null;
+      modelPath: string;
+      modelExists: boolean;
+    }>("whisper_status"),
+  transcribeMicrophoneTest: (seconds?: number) =>
+    safeInvoke<string>("transcribe_microphone_test", {
+      seconds: seconds ?? 8,
+    }),
 };

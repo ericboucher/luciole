@@ -43,13 +43,19 @@
     "copyright": "Copyright © 2026 Luciole Contributors. Apache-2.0",
     "shortDescription": "Compagnon IA local et souverain",
     "longDescription": "Luciole est un compagnon IA local et souverain pour la productivité : dictée vocale, correction et traduction de texte, comptes-rendus de réunion avec diarisation des locuteurs. 100% hors ligne.",
+    "externalBin": [
+      "binaries/whisper"
+    ],
     "macOS": {
       "minimumSystemVersion": "13.0",
       "entitlements": "entitlements.plist",
       "exceptionDomain": "",
       "signingIdentity": null,
       "providerShortName": null
-    }
+    },
+    "resources": [
+      "resources/models/ggml-tiny.bin"
+    ]
   },
   "plugins": {
     "globalShortcut": {},

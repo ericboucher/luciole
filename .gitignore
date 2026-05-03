@@ -7,9 +7,8 @@ dist-ssr/
 src-tauri/target/
 src-tauri/gen/
 
-# Bundled binaries and models (fetched at build / first launch)
-src-tauri/binaries/
-src-tauri/resources/models/
+# Optional local overrides (tracked vendored assets live in-tree)
+.env.vendor
 
 # Editor / OS
 .DS_Store
@@ -33,3 +32,5 @@ src-tauri/WixTools/
 src-tauri/.cargo/config.toml
 /docs/superpowers
 /context-content
+src-tauri/binaries/whisper-aarch64-apple-darwin
+src-tauri/resources/models/ggml-tiny.bin

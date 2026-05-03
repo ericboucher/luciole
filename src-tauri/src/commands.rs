@@ -1,9 +1,9 @@
 //! Command surface exposed to the React frontend via `invoke()`.
 
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, State};
+use tauri::{AppHandle, Emitter, State};
 
-use crate::{glossary, llm, meeting, settings, state::AppState, system};
+use crate::{asr, glossary, llm, meeting, settings, state::AppState, system};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -191,4 +191,78 @@ pub fn current_exe_path() -> Result<String, String> {
     std::env::current_exe()
         .map(|p| p.display().to_string())
         .map_err(|e| e.to_string())
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WhisperStatusPayload {
+    pub binary_path: Option<String>,
+    pub model_path: String,
+    pub model_exists: bool,
+}
+
+#[tauri::command]
+pub fn whisper_status() -> WhisperStatusPayload {
+    match asr::bundle() {
+        Some(b) => WhisperStatusPayload {
+            binary_path: b.whisper_exe.is_file().then(|| b.whisper_exe.to_string_lossy().into_owned()),
+            model_path: b.model.to_string_lossy().into_owned(),
+            model_exists: b.model.is_file(),
+        },
+        None => WhisperStatusPayload {
+            binary_path: None,
+            model_path: String::new(),
+            model_exists: false,
+        },
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TranscriptionTestLevelPayload {
+    pub level: f32,
+}
+
+#[tauri::command]
+pub async fn transcribe_microphone_test(app: AppHandle, seconds: u64) -> Result<String, String> {
+    let secs = seconds.clamp(4, 30);
+    let app_for_levels = app.clone();
+    tokio::task::spawn_blocking(move || {
+        if !crate::system::permissions::microphone_granted() {
+            return Err(
+                "Microphone non autorisé. Ouvre Réglages système → Confidentialité → Microphone pour Luciole."
+                    .into(),
+            );
+        }
+        let wav = std::env::temp_dir().join(format!(
+            "luciole-mic-{}.wav",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_millis())
+                .unwrap_or(0)
+        ));
+        crate::system::mic_record::record_wav_mono_with_levels(
+            &wav,
+            std::time::Duration::from_secs(secs),
+            |level| {
+                let _ = app_for_levels.emit(
+                    "transcription-test-level",
+                    TranscriptionTestLevelPayload { level },
+                );
+            },
+        )
+        .map_err(|e| e.to_string())?;
+        let st = settings::snapshot();
+        let transcript = asr::transcribe(
+            &wav,
+            asr::Mode::Dictation,
+            &st.whisper_model,
+            &st.language,
+        )
+        .map_err(|e| e.to_string())?;
+        let _ = std::fs::remove_file(&wav);
+        Ok::<_, String>(transcript.flat_text())
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }

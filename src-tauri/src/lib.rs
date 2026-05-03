@@ -56,10 +56,13 @@ pub fn run() {
             commands::request_accessibility_prompt,
             commands::open_system_settings,
             commands::current_exe_path,
+            commands::whisper_status,
+            commands::transcribe_microphone_test,
         ])
         .setup(|app| {
             paths::ensure_app_dirs()?;
             settings::load_or_init(&app.handle())?;
+            asr::init_bundle(app.handle());
             tray::setup_tray(app.handle())?;
             shortcuts::register_default_shortcuts(app.handle())?;
 

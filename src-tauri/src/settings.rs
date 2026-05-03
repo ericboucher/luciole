@@ -29,7 +29,7 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             language: "fr".into(),
-            whisper_model: "small".into(),
+            whisper_model: "tiny".into(),
             ollama_model: "gemma4:e4b".into(),
             obsidian_vault_path: None,
             // Hold-to-dictate uses Option alone; the string form documents intent.
